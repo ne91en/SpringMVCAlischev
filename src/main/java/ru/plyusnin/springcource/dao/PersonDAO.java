@@ -31,4 +31,7 @@ public class PersonDAO {
         person.setId(++PEOPLE_COUNT);
         people.add(person);
     }
+    public void editPerson(Person person, int id){
+        people.add(id, person);
+    }
 }
