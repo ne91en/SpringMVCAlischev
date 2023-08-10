@@ -3,9 +3,7 @@ package ru.plyusnin.springcource.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import ru.plyusnin.springcource.dao.PersonDAO;
 import ru.plyusnin.springcource.models.Person;
 
@@ -27,5 +25,18 @@ public class PeopleController {
     public String show(@PathVariable("id") int id, Model model){
         model.addAttribute("person", personDAO.show(id));
         return "people/show";
+    }
+//    @ModelAttribute("testModel")
+//    public String testingModel(){
+//        return "Hello, it's a tasting string";
+//    }
+    @GetMapping("/new")
+    public String newPerson(@ModelAttribute("person") Person person){
+        return "people/new";
+    }
+    @PostMapping
+    public String addPerson(@ModelAttribute("person") Person person){
+        personDAO.addPerson(person);
+        return "redirect:/people";
     }
 }
