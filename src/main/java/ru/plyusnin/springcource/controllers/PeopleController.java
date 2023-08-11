@@ -1,8 +1,10 @@
 package ru.plyusnin.springcource.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.plyusnin.springcource.dao.PersonDAO;
 import ru.plyusnin.springcource.models.Person;
@@ -21,21 +23,23 @@ public class PeopleController {
         model.addAttribute("people", personDAO.index());
         return "people/index";
     }
+
     @GetMapping("/{id}")
     public String show(@PathVariable("id") int id, Model model){
         model.addAttribute("person", personDAO.show(id));
         return "people/show";
     }
-//    @ModelAttribute("testModel")
-//    public String testingModel(){
-//        return "Hello, it's a tasting string";
-//    }
+
     @GetMapping("/new")
-    public String newPerson(@ModelAttribute("person") Person person){
+    public String newPerson(@ModelAttribute("person")  Person person){
         return "people/new";
     }
+
     @PostMapping
-    public String addPerson(@ModelAttribute("person") Person person){
+    public String addPerson(@ModelAttribute("person") @Valid Person person, BindingResult bindingResult){
+        if (bindingResult.hasErrors()){
+            return "people/new";
+        }
         personDAO.addPerson(person);
         return "redirect:/people";
     }
@@ -44,11 +48,15 @@ public class PeopleController {
         model.addAttribute("person", personDAO.show(id));
         return "/people/edit";
     }
+
     @PostMapping("/{id}")
-    public String update(@ModelAttribute("person") Person person, @PathVariable("id") int id){
+    public String update(@ModelAttribute("person") @Valid Person person, BindingResult bindingResult, @PathVariable("id") int id){
+        if (bindingResult.hasErrors())
+            return "/people/edit";
         personDAO.editPerson(id, person);
         return "redirect:/people";
     }
+
     @DeleteMapping("/{id}")
     public String deletePerson(@PathVariable int id){
         personDAO.deletePerson(id);
